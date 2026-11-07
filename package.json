@@ -1,0 +1,22 @@
+{
+  "name": "cleartask-global-ai-builders",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test",
+    "check": "node scripts/check-imports.js && node --check src/lib/planner.js && node --check server/index.js && node --check server/planner.js && node --test",
+    "server": "node server/index.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "lucide-react": "^1.61.0"
+  },
+  "license": "MIT"
+}

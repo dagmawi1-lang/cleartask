@@ -1,0 +1,18 @@
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const app = readFileSync(resolve(root, 'src/App.jsx'), 'utf8');
+const planner = readFileSync(resolve(root, 'src/lib/planner.js'), 'utf8');
+const match = app.match(/import\s*\{([^}]+)\}\s*from\s*['"]\.\/lib\/planner\.js['"]/);
+if (!match) throw new Error('Missing planner module import.');
+const names = match[1].split(',').map(x => x.trim()).filter(Boolean);
+const missing = names.filter(name => !new RegExp(`export\\s+(?:function|const|let|class)\\s+${name}\\b`).test(planner));
+if (missing.length) throw new Error(`Missing planner exports: ${missing.join(', ')}`);
+const iconMatch = app.match(/import\s*\{([^}]+)\}\s*from\s*['"]lucide-react['"]/);
+if (!iconMatch) throw new Error('Missing icon import.');
+const iconNames = iconMatch[1].split(',').map(x => x.trim()).filter(Boolean);
+const icons = await import('lucide-react');
+const missingIcons = iconNames.filter(name => !(name in icons));
+if (missingIcons.length) throw new Error(`Missing icon exports: ${missingIcons.join(', ')}`);
+console.log(`✓ ${names.length} planner exports and ${iconNames.length} icon exports verified.`);
