@@ -2,6 +2,12 @@
 
 **Turn “where do I begin?” into a plan.** ClearTask is a student-focused task planner that converts a student's own description into an editable sequence of small steps, rough time estimates, and a progress checklist.
 
+## My role & contributions
+
+**Solo developer · AI-assisted**
+
+- Designed the step-by-step planning flow and the template planner used when AI is off
+
 ## Current status
 
 Version 1.0.1 is a pre-event baseline prototype created before Global AI Builder's Challenge begins. The event runs November 21–28, 2026. The official rules allow new projects and meaningful improvements to existing projects, but require teams to disclose existing work and identify the improvements completed during the event. This repository therefore records the current baseline; event-period changes must be separately documented in the changelog and submission.
