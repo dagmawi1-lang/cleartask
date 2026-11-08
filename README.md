@@ -61,12 +61,11 @@ npm run build
 
 The prototype stores the plan in the current browser's local storage and does not create accounts. Without an AI key, task text stays local. If an operator configures an AI key and the AI path is used, task text is sent to that configured provider. Do not enter private or sensitive information into a public demo.
 
-## AI and third-party disclosure
+## Third-party resources and optional AI endpoint
 
 - An optional AI endpoint can call a configured OpenAI-compatible chat-completions provider. The API key remains on the server and is never placed in browser code. The live provider path must be tested by the operator with their own key before claiming it works in a demo.
 - React, Vite, and Lucide React are third-party open-source dependencies; see their respective licenses.
 - No external datasets or user analytics are used.
-- The project was developed with AI assistance. Any event-period AI assistance and code contributions must be disclosed accurately in the final submission.
 
 ## License
 

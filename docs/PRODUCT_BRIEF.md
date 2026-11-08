@@ -1,7 +1,7 @@
 # Product brief — Global AI Builder’s Challenge — ClearTask
 
 ## Working concept
-ClearTask: an AI-assisted task explainer for students that turns a confusing assignment or multi-step everyday task into a clear, editable sequence with estimated effort, prerequisite questions, and a progress checklist. It should ask clarifying questions and avoid doing graded work on the student’s behalf.
+ClearTask: an AI-powered task explainer for students that turns a confusing assignment or multi-step everyday task into a clear, editable sequence with estimated effort, prerequisite questions, and a progress checklist. It should ask clarifying questions and avoid doing graded work on the student’s behalf.
 
 ## User problem
 Make the problem concrete and identify one primary user. Avoid broad claims that cannot be demonstrated.
