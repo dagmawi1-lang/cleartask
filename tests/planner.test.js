@@ -44,13 +44,14 @@ test('calculates progress without mutating the plan', () => {
   assert.equal(steps[1].done, false);
 });
 
-test('exports an editable markdown checklist', () => {
+test('exports an editable markdown checklist with an optional schedule', () => {
   const plan = buildPlan('Prepare a science presentation about renewable energy.');
   plan.steps[0].done = true;
-  const markdown = toMarkdown(plan);
+  const markdown = toMarkdown(plan, { days: [{ date: '2026-11-23', minutes: 60, items: [{ title: 'A' }, { title: 'B' }] }] });
   assert.match(markdown, /^# Prepare a science presentation/m);
   assert.match(markdown, /- \[x\] 1\./);
-  assert.match(markdown, /starter plan/);
+  assert.match(markdown, /## Schedule/);
+  assert.match(markdown, /2026-11-23\*\* \(60 min\): A; B/);
 });
 
 test('accepts only real calendar dates', () => {
@@ -60,10 +61,11 @@ test('accepts only real calendar dates', () => {
 });
 
 test('normalizes persisted plans and drops malformed step data', () => {
-  const normalized = normalizePlan({ task: 'A task with enough detail', kind: 'school', deadline: '2026-02-31', availableMinutes: 9999, steps: [{ id: 'a', title: 'Do thing', detail: 'Details', minutes: 9999, done: true }, null] });
+  const normalized = normalizePlan({ task: 'A task with enough detail', kind: 'school', deadline: '2026-02-31', availableMinutes: 9999, mode: 'ai', engine: 'Gemini (your key)', steps: [{ id: 'a', title: 'Do thing', detail: 'Details', minutes: 9999, done: true }, null] });
   assert.equal(normalized.deadline, '');
   assert.equal(normalized.availableMinutes, 600);
   assert.equal(normalized.steps.length, 1);
   assert.equal(normalized.steps[0].minutes, 600);
+  assert.equal(normalized.mode, 'ai');
   assert.equal(normalizePlan({ task: 'bad', steps: [] }), null);
 });
