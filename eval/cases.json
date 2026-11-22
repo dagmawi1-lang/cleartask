@@ -1,0 +1,17 @@
+[
+  {"kind":"school","task":"Prepare a 5-minute presentation comparing solar, wind, and hydro power with three sources.","minutes":120},
+  {"kind":"school","task":"Write a one-paragraph analysis of why Fitzgerald uses an unreliable narrator in The Great Gatsby chapters 1-2, with one quote.","minutes":60},
+  {"kind":"school","task":"Study for a biology unit test on DNA replication, transcription, and translation on Friday.","minutes":180},
+  {"kind":"school","task":"Build a Spanish slide deck about daily life in 1960s Spain using the imperfect tense.","minutes":150},
+  {"kind":"school","task":"Complete a ransomware research worksheet listing five attacks since 2021 with victims, losses, and sources.","minutes":90},
+  {"kind":"school","task":"Make a science fair poster on how fertilizer concentration affects radish growth, including a data table and graph.","minutes":240},
+  {"kind":"school","task":"Finish calculus homework on related rates, problems 1 to 20, and check answers against the textbook.","minutes":120},
+  {"kind":"school","task":"Draft a 650-word college essay about teaching younger students to code at a robotics club.","minutes":240},
+  {"kind":"general","task":"Plan a surprise birthday dinner for my mom for eight people with a budget of 150 dollars.","minutes":120},
+  {"kind":"general","task":"Clean out the garage and sort items into keep, donate, and sell before the weekend.","minutes":180},
+  {"kind":"general","task":"Apply to three part-time jobs at coding schools near Woodbridge, Virginia.","minutes":120},
+  {"kind":"general","task":"Organize a community park clean-up with 15 volunteers next Saturday morning.","minutes":150},
+  {"kind":"general","task":"Set up a new laptop with my school accounts, a password manager, and backups.","minutes":90},
+  {"kind":"general","task":"Prepare a robotics team's driver practice schedule before the regional competition.","minutes":90},
+  {"kind":"general","task":"Train for a 5K race in six weeks while keeping up with homework.","minutes":120}
+]
