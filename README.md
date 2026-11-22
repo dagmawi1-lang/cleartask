@@ -1,54 +1,77 @@
 # ClearTask
 
-**Turn "where do I begin?" into a plan.** ClearTask is a task planner for students. Describe an assignment or a multi-step task in your own words, and ClearTask turns it into an editable list of small steps with time estimates and a progress checklist.
+**Turn "where do I begin?" into a plan.** ClearTask is a free planner for students. Describe an assignment or any multi-step task in your own words. ClearTask's AI turns it into specific, editable steps, splits any step you're stuck on into tiny actions, and fits the work into the days before your due date.
 
-Being prepared for the [Global AI Builder's Challenge](https://global-ai-builders-challenge.devpost.com/) (November 21–28, 2026). Versions 1.0.x were built before the event; see the [changelog](CHANGELOG.md).
+**Try it:** https://dagmawi1-lang.github.io/cleartask/ (works offline and can be installed as an app)
 
-## My role & contributions
+Built for the [Global AI Builder's Challenge](https://global-ai-builders-challenge.devpost.com/) (November 21–28, 2026).
 
-**Solo developer · AI-assisted**
+## What was built during the event
 
-- Designed the step-by-step planning flow and the template planner used when AI is off
+Version 1.0.x (Nov 4, before the event) was a template planner plus an optional server-side AI endpoint that only worked if someone ran their own server with a key. Nobody visiting a website could actually use the AI. **Version 2.0 (built Nov 22, during the event)** makes AI usable by anyone with no server:
 
-## Features
+| Area | 1.0 (before event) | 2.0 (during event) |
+|---|---|---|
+| AI engines | Server-only, needs operator key | **On-device AI** in Chrome (private, nothing leaves the computer), **your own Gemini key**, or any **OpenAI-compatible** key, all called straight from the browser |
+| AI output safety | Basic shape check | Validator that clamps times, drops empty steps, and **removes steps that try to do the work for the student** (e.g. "here is your essay"), with a visible count |
+| Plan quality signal | none | "**X/Y steps refer to details from your description**" so students can see whether the plan is really about their task |
+| Unclear instructions | none | AI lists up to 3 **questions to check with the teacher** instead of guessing |
+| Stuck on a step | none | **"I'm stuck — split this step"**: AI breaks it into 5–15 minute actions (template fallback if AI is off) |
+| Scheduling | Target date shown only | **Day-by-day schedule** that fits unfinished steps into your daily time, keeps a buffer day, and warns when the plan can't fit |
+| Editing | Rename / check off | Also edit minutes, add your own steps, delete steps |
+| App | Web page | **Installable PWA** with offline support; static site on GitHub Pages |
+| Tests | 9 | 20 unit tests + browser smoke test + evaluation script |
 
-- **Starter plans** for school assignments and everyday tasks, generated from the student's own description.
-- **Optional AI planner:** when a provider key is configured on the server, an AI model drafts the steps. Its output is validated, and the app falls back to the template planner if the provider is unavailable.
-- **Target date and available time** to shape the plan.
-- **Editable steps:** rename steps, change details, and mark steps complete with a progress bar.
-- **Export** the plan as a Markdown checklist.
-- Plans are saved in the browser. No account is needed.
+See [CHANGELOG.md](CHANGELOG.md) for the full list.
 
-## Tech stack
+## How the AI works
 
-React 19 · Vite · JavaScript · CSS · Lucide icons · Node.js (built-in HTTP server and test runner)
+1. The student's description, task type, date, and time budget go into a short prompt ([`src/lib/ai.js`](src/lib/ai.js)). The system prompt forbids writing, solving, or completing graded work.
+2. The model must return JSON (`steps`, `questions`, `note`). ClearTask pulls JSON out even if the model wraps it in chat text.
+3. `validateAiSteps` cleans the reply: times are rounded and clamped, empty steps are dropped, and steps that contain finished work ("the answer is…", "here is your essay…") are removed. If fewer than 3 usable steps remain, ClearTask falls back to its template and says so.
+4. ClearTask measures how many steps mention words from the student's own description and shows it, so a generic plan is obvious.
 
-## Getting started
+**Why AI here:** the template gives everyone the same 6–8 generic steps. It can't know that a "presentation comparing solar, wind and hydro" needs one source per energy type and a rehearsal under 5 minutes. That's the gap the AI fills.
 
-Requires Node.js 20.19+ or 22.12+.
+## Evaluation
+
+`node eval/run.mjs` runs 15 realistic tasks (8 school, 7 everyday) in [`eval/cases.json`](eval/cases.json). With `GEMINI_API_KEY` set, it runs the same tasks through Gemini and compares.
+
+| Engine | Valid plans | Steps specific to the task | Steps removed by guardrail | Time-budget error |
+|---|---|---|---|---|
+| Template (measured) | 15/15 | 11% | 0 | 4% |
+| Gemini 2.5 Flash | _run `GEMINI_API_KEY=… node eval/run.mjs` and paste results_ | | | |
+
+"Specific" counts a step if it mentions at least one keyword from the task description. It's a rough proxy: it can't tell whether a step is *good*, only whether it's about the right thing. Where it stops being useful: very short descriptions (few keywords) and tasks described with different words than the steps use.
+
+The browser smoke test simulates Chrome's on-device model with a scripted reply containing one "here is your essay" step. ClearTask removed it, showed "1 AI step removed", built the schedule, and split a step on request, with no console errors.
+
+## Privacy
+
+- **Template** and **on-device AI**: your task text never leaves your computer.
+- **Gemini / OpenAI-compatible**: your task text goes to that provider using *your* key. The key is kept in this tab's session storage only and is deleted when the tab closes.
+- Plans are saved in your browser. There are no accounts and no ClearTask server.
+
+## Run it
+
+Use the live site, or build it yourself:
 
 ```bash
-npm install
-npm run dev        # app
-npm run server     # planner API (second terminal)
+npm install          # react, react-dom, esbuild
+sh scripts/build.sh  # outputs the static app to docs/
+npm test             # unit tests
+node eval/run.mjs    # evaluation
 ```
 
-Open the local URL printed by Vite. To create a production build, run `npm run build`.
+On-device AI needs a Chrome version with the built-in Prompt API. If it's unavailable, the AI settings say so and the other engines still work.
 
-To turn on the AI planner, copy `.env.example` to `.env` and set `AI_API_KEY` (plus `AI_BASE_URL` and `AI_MODEL` if needed). Any OpenAI-compatible chat-completions endpoint works. The key stays on the server and is never sent to the browser.
+## AI disclosure
 
-## Testing
+I'm a solo developer. I used Claude (Anthropic) as a coding assistant to write and test much of this code, and I directed the features, reviewed the output, and tested the app. Inside the app, AI is used only to draft plans and split steps, and its output is checked as described above.
 
-```bash
-npm run check   # import checks, syntax checks, and the test suite
-```
+## My role
 
-Tests cover the template planner, date handling, API validation, and normalization of AI output.
-
-## Design notes
-
-- **Plans are drafts.** Every step is editable, and ClearTask helps students organize their work rather than doing the work for them.
-- **Privacy.** Without an AI key, task text never leaves the browser. With one, the task description is sent to the configured provider.
+**Solo developer · AI-assisted.** Product idea, feature choices, and testing.
 
 ## License
 
