@@ -21,7 +21,7 @@ export function normalizePlan(value) {
     done: step.done === true
   }));
   if (!steps.length) return null;
-  return { task: normalizeTask(value.task), kind: value.kind === 'school' ? 'school' : 'general', deadline: isRealDate(value.deadline) ? value.deadline : '', availableMinutes: Math.max(15, Math.min(600, Number(value.availableMinutes) || 90)), steps, mode: value.mode === 'ai' ? 'ai' : 'template', note: String(value.note || 'Review and edit this plan before using it.').slice(0, 500) };
+  return { task: normalizeTask(value.task), kind: value.kind === 'school' ? 'school' : 'general', deadline: isRealDate(value.deadline) ? value.deadline : '', availableMinutes: Math.max(15, Math.min(600, Number(value.availableMinutes) || 90)), steps, mode: ['ai', 'template'].includes(value.mode) ? value.mode : 'template', engine: typeof value.engine === 'string' ? value.engine.slice(0, 60) : '', note: String(value.note || 'Review and edit this plan before using it.').slice(0, 500) };
 }
 
 export function buildPlan(task, options = {}) {
@@ -91,11 +91,15 @@ export function getProgress(steps = []) {
   return { total, completed, percent: total ? Math.round(completed / total * 100) : 0 };
 }
 
-export function toMarkdown(plan) {
+export function toMarkdown(plan, schedule) {
   if (!plan || !Array.isArray(plan.steps)) return '';
-  const lines = [`# ${plan.task || 'My ClearTask plan'}`, '', `Estimated work time: ${plan.availableMinutes || 0} minutes`, plan.deadline ? `Target date: ${plan.deadline}` : '', '', '## Steps'];
+  const lines = [`# ${plan.task || 'My ClearTask plan'}`, '', `Estimated work time: ${plan.steps.reduce((s, x) => s + x.minutes, 0)} minutes`, plan.deadline ? `Target date: ${plan.deadline}` : '', '', '## Steps'];
   for (const [index, step] of plan.steps.entries()) {
     lines.push(`${step.done ? '- [x]' : '- [ ]'} ${index + 1}. ${step.title} (${step.minutes} min)`, `  ${step.detail}`);
+  }
+  if (schedule && schedule.days && schedule.days.length) {
+    lines.push('', '## Schedule');
+    for (const day of schedule.days) lines.push(`- **${day.date}** (${day.minutes} min): ${day.items.map(i => i.title).join('; ')}`);
   }
   lines.push('', `> ${plan.note || 'Review and edit this plan before using it.'}`);
   return lines.filter((line) => line !== '').join('\n');
